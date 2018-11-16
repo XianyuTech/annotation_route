@@ -2,13 +2,13 @@
 
 # 简介
 
- 一个以注解方式实现的路由映射解决方案，基于 source_gen
+一个以注解方式实现的路由映射解决方案，基于 source_gen
 
 # 使用
 
 1. **注意**: 你的页面应该实现指定的构造器，构造器接受一个继承于$RouteOption的类，或者直接使用$RouteOption
-使用@ARoute 注解你的页面类  
-例：
+   使用@ARoute 注解你的页面类  
+   例：
 
 ```Dart
 @ARoute(url: 'myapp://pagea')
@@ -49,6 +49,16 @@ class Router {
 ```
 
 # 安装
+
+## 从 pub 安装
+
+在你的 pubspec.yaml 文件下声明  
+例：
+
+```yaml
+dev_dependencies:
+  annotation_route: any
+```
 
 ## 从源码安装
 
@@ -112,6 +122,16 @@ class Router {
 ```
 
 # Installation
+
+## install from packages
+
+add packages to dev_dependencies in your pubspec.yaml  
+example:
+
+```yaml
+dev_dependencies:
+  annotation_route: any
+```
 
 ## install from source code
 
