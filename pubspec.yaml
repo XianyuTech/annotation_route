@@ -1,0 +1,15 @@
+name: annotation_route
+description: auto generate router config
+version: 0.0.1
+dependencies:
+  analyzer: any
+  build: any
+  source_gen: '>=0.8.0'
+  build_config: '>=0.3.0'
+  mustache4dart: any
+dev_dependencies:
+  build_runner: '>=0.9.1'
+  test: any
+
+environment:
+  sdk: '>=2.0.0 <3.0.0'

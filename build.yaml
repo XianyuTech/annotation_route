@@ -1,0 +1,29 @@
+# Read about `build.yaml` at https://pub.dartlang.org/packages/build_config
+targets:
+  $default:
+    builders:
+      annotation_route|route_builder:
+        enabled: true
+        generate_for:
+          exclude: ['**.internal.dart']
+      annotation_route|route_write_builder:
+        enabled: true
+        options: { 'write': true }
+        generate_for:
+          exclude: ['**.internal.dart']
+
+builders:
+  route_write_builder:
+    import: 'package:annotation_route/builder.dart'
+    builder_factories: ['routeWriteBuilder']
+    build_extensions: { '.route.dart': ['.internal.dart'] }
+    auto_apply: root_package
+    build_to: source
+
+  route_builder:
+    import: 'package:annotation_route/builder.dart'
+    builder_factories: ['routeBuilder']
+    build_extensions: { '.dart': ['.internal_invalid.dart'] }
+    auto_apply: root_package
+    runs_before: ['annotation_route|route_write_builder']
+    build_to: source
