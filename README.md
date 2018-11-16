@@ -32,7 +32,7 @@ class MyRouter {}
 ```
 
 4. 现在你可以使用它来获取类的实例了  
-   例子：
+   例：
 
 ```Dart
 class MyRouteOption extends $RouteOption {
