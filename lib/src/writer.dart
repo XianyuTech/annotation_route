@@ -1,8 +1,8 @@
-import 'collector.dart';
 import 'package:mustache4dart/mustache4dart.dart';
+import 'collector.dart';
 import 'page_config_map_util.dart';
 
-const clazzTpl = """
+const String clazzTpl = """
 import 'dart:convert';
 import 'package:annotation_route/route.dart';
 {{#refs}}
@@ -17,12 +17,12 @@ class \$RouterInternal<T extends \$RouteOption> {
   }
 
   dynamic implFromPageConfig(Map<String, dynamic> pageConfig, T option) {
-    var clazz = pageConfig['clazz'] as Type;
+    final Type clazz = pageConfig['clazz'];
     if (null == clazz) {
       return null;
     }
     try {
-      var clazzInstance = instanceFromClazz(clazz, option);
+      final dynamic clazzInstance = instanceFromClazz(clazz, option);
       return clazzInstance;
     } catch (e) {
       return null;
@@ -67,47 +67,38 @@ class \$RouterInternal<T extends \$RouteOption> {
 }
 """;
 
-class InnerWriter {
-  write() {}
-}
-
-class OuterWriter {
-  List<InnerWriter> innerWriters;
-  OuterWriter(this.innerWriters);
-  write() {}
-}
-
-class ImportWriter {}
-
 class Writer {
   Collector collector;
   Writer(this.collector);
 
-  instanceFromClazz() {
-    var buffer = new StringBuffer();
-    buffer..writeln("switch(clazz) {");
-    var mappedClazz = <String, bool>{};
-    collector.routerMap.forEach((url, configList) {
-      configList.forEach((config) {
-        dynamic clazz = config[wK('clazz')];
-        if (mappedClazz[clazz] == null) {
-          mappedClazz[clazz] = true;
-        } else {
-          return;
-        }
-        buffer.writeln("case ${clazz}: return new ${clazz}(option);");
-      });
+  String instanceFromClazz() {
+    final StringBuffer buffer = new StringBuffer();
+    buffer..writeln('switch(clazz) {');
+    final Map<String, bool> mappedClazz = <String, bool>{};
+    final Function writeClazzCase = (Map<String, dynamic> config) {
+      final dynamic clazz = config[wK('clazz')];
+      if (mappedClazz[clazz] == null) {
+        mappedClazz[clazz] = true;
+      } else {
+        return;
+      }
+      buffer.writeln('case ${clazz}: return new ${clazz}(option);');
+    };
+    collector.routerMap
+        .forEach((String url, List<Map<String, dynamic>> configList) {
+      configList.forEach(writeClazzCase);
     });
-    buffer..writeln("default:return null;")..writeln("}");
+    buffer..writeln('default:return null;')..writeln('}');
     return buffer.toString();
   }
 
-  write() {
-    var refs = [];
-    collector.importList.forEach((path) {
-      refs.add({'path': path});
-    });
-    return render(clazzTpl, {
+  String write() {
+    final List<Map<String, String>> refs = <Map<String, String>>[];
+    final Function addRef = (String path) {
+      refs.add(<String, String>{'path': path});
+    };
+    collector.importList.forEach(addRef);
+    return render(clazzTpl, <String, dynamic>{
       'refs': refs,
       'instanceFromClazz': instanceFromClazz(),
       'routerMap': collector.routerMap.toString()

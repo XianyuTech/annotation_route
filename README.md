@@ -10,43 +10,53 @@
    使用@ARoute 注解你的页面类  
    例：
 
-```Dart
-@ARoute(url: 'myapp://pagea')
-class A {
+   ```Dart
+   @ARoute(url: 'myapp://pagea')
+   class A {
    A(MyRouteOption option): super();
-}
-```
+   }
+   ```
 
 2. 使用 **@ARouteRoot** 注解 **你自己**的 router 类
    例：
 
-```Dart
-@ARouteRoot()
-class MyRouter {}
-```
+   ```Dart
+   @ARouteRoot()
+   class MyRouter {}
+   ```
 
-3. 在你的工作目录下运行 build_annotation_route.sh 脚本，或者运行如下的命令:
+3. 在你的工作目录下运行 build_annotation_route.sh 脚本，或者运行如下命令:  
+   build:
 
-```shell
+   ```shell
     flutter packages pub run build_runner build --delete-conflicting-outputs
-```
+   ```
+
+   建议在执行 build 命令前，先执行如下命令:  
+    clean:
+
+   ```shell
+    flutter packages pub run build_runner clean
+   ```
 
 4. 现在你可以使用它来获取类的实例了  
    例：
 
-```Dart
-class MyRouteOption extends $RouteOption {
+   ```Dart
+   class MyRouteOption extends $RouteOption {
 
-}
+   }
 
-@ARouteRoot()
-class Router {
-    $RouterInternal internal = \$RouterInternal<MyRouteOption>();
+   @ARouteRoot()
+   class Router {
+       $RouterInternal internal = \$RouterInternal<MyRouteOption>();
    getPage(MyRouteOption option) {
    return internal.implFromRouteOption(option);
    }
-}
-```
+   }
+   ```
+
+5. 具体代码可以参考 lib/example/\*下的文件
 
 # 安装
 
@@ -82,44 +92,53 @@ a router config mapping solution based on source_gen through annotation
 1. **Notice:** your page should own a constuctor that can be initialized with a class extend \$RouteOption Annotate the page class with @ARoute  
    example:
 
-```Dart
-@ARoute(url: 'myapp://pagea')
-class A {
+   ```Dart
+   @ARoute(url: 'myapp://pagea')
+   class A {
    A(MyRouteOption option): super();
-}
-```
+   }
+   ```
 
 2. Annotate **your own router class** with **@ARouteRoot**  
    example:
 
-```Dart
-@ARouteRoot()
-class MyRouter {}
-```
+   ```Dart
+   @ARouteRoot()
+   class MyRouter {}
+   ```
 
 3. run the build_annotation_route.sh in your workspace Or just run the command below in your workspace  
-   build command:
+   build:
 
-```shell
+   ```shell
     flutter packages pub run build_runner build --delete-conflicting-outputs
-```
+   ```
+
+   suggest you running the clean command before build:  
+    clean:
+
+   ```shell
+    flutter packages pub run build_runner clean
+   ```
 
 4. now you can get the instance  
    example:
 
-```Dart
-class MyRouteOption extends $RouteOption {
+   ```Dart
+   class MyRouteOption extends $RouteOption {
 
-}
+   }
 
-@ARouteRoot()
-class Router {
-    $RouterInternal internal = \$RouterInternal<MyRouteOption>();
+   @ARouteRoot()
+   class Router {
+       $RouterInternal internal = \$RouterInternal<MyRouteOption>();
    getPage(MyRouteOption option) {
    return internal.implFromRouteOption(option);
    }
-}
-```
+   }
+   ```
+
+5. examples placed in 'lib/example/\*'
 
 # Installation
 

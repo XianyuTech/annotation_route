@@ -8,12 +8,12 @@ import 'collector.dart';
 import 'writer.dart';
 
 class RouteWriterGenerator extends GeneratorForAnnotation<ARouteRoot> {
-  collector() {
+  Collector collector() {
     return RouteGenerator.collector;
   }
 
   @override
-  generateForAnnotatedElement(
+  dynamic generateForAnnotatedElement(
       Element element, ConstantReader annotation, BuildStep buildStep) {
     return Writer(collector()).write();
   }
@@ -23,7 +23,7 @@ class RouteGenerator extends GeneratorForAnnotation<ARoute> {
   static Collector collector = Collector();
 
   @override
-  generateForAnnotatedElement(
+  dynamic generateForAnnotatedElement(
       Element element, ConstantReader annotation, BuildStep buildStep) {
     collector.collect(element, annotation, buildStep);
     return null;

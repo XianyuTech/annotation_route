@@ -46,12 +46,12 @@ class $RouterInternal<T extends $RouteOption> {
   }
 
   dynamic implFromPageConfig(Map<String, dynamic> pageConfig, T option) {
-    var clazz = pageConfig['clazz'] as Type;
+    final Type clazz = pageConfig['clazz'];
     if (null == clazz) {
       return null;
     }
     try {
-      var clazzInstance = instanceFromClazz(clazz, option);
+      final dynamic clazzInstance = instanceFromClazz(clazz, option);
       return clazzInstance;
     } catch (e) {
       return null;
