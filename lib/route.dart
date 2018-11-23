@@ -17,8 +17,22 @@ class ARouteAlias {
   const ARouteAlias({this.desc, this.url, this.params});
 }
 
-class $RouteOption {
+class ARouteOption {
   String urlpattern;
   Map<String, dynamic> params;
-  $RouteOption(this.urlpattern, this.params);
+  ARouteOption(this.urlpattern, this.params);
+}
+
+enum ARouterResultState { FOUND, REDIRECT, NOT_FOUND }
+
+class ARouterResult {
+  dynamic widget;
+  String interceptor;
+  ARouterResultState state;
+  ARouterResult({this.state, this.widget, this.interceptor});
+}
+
+abstract class ARouterInternal {
+  bool hasPageConfig(ARouteOption option);
+  ARouterResult findPage(ARouteOption option, dynamic initOption);
 }

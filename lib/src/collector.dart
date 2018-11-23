@@ -8,41 +8,41 @@ import 'page_config_map_util.dart';
 
 class Collector {
   Collector();
-  Map<String, List<Map<String, dynamic>>> routerMap = {};
-  List<String> importList = [];
+  Map<String, List<Map<String, dynamic>>> routerMap =
+      <String, List<Map<String, dynamic>>>{};
+  List<String> importList = <String>[];
 
   Map<String, DartObject> toStringDartObjectMap(
       Map<DartObject, DartObject> map) {
-    return map.map((k, v) {
-      return MapEntry(k.toStringValue(), v);
+    return map.map((DartObject k, DartObject v) {
+      return MapEntry<String, DartObject>(k.toStringValue(), v);
     });
   }
 
   Map<String, String> toStringStringMap(Map<DartObject, DartObject> map) {
-    return map.map((k, v) {
-      return MapEntry(k.toStringValue(), v.toStringValue());
+    return map.map((DartObject k, DartObject v) {
+      return MapEntry<String, String>(k.toStringValue(), v.toStringValue());
     });
   }
 
   void collect(
       ClassElement element, ConstantReader annotation, BuildStep buildStep) {
-    String className = element.name;
-    var url = annotation.peek('url')?.stringValue;
+    final String className = element.name;
+    final String url = annotation.peek('url')?.stringValue;
     if (url != null) {
       addEntryFromPageConfig(annotation, className);
     }
-    var alias = annotation.peek('alias');
+    final ConstantReader alias = annotation.peek('alias');
     if (alias != null) {
-      var aliasList = alias.listValue;
-      aliasList.forEach((one) {
-        print(one);
-        var oneObj = ConstantReader(one);
+      final List<DartObject> aliasList = alias.listValue;
+      final Function addEntry = (DartObject one) {
+        final ConstantReader oneObj = ConstantReader(one);
         addEntryFromPageConfig(oneObj, className);
-        return;
-      });
+      };
+      aliasList.forEach(addEntry);
     }
 
-    if (buildStep.inputId.path.indexOf('lib/') > -1) {
+    if (buildStep.inputId.path.contains('lib/')) {
       print(buildStep.inputId.path);
       importClazz(
           "package:${buildStep.inputId.package}/${buildStep.inputId.path.replaceFirst('lib/', '')}");
@@ -52,27 +52,29 @@ class Collector {
   }
 
   void addEntryFromPageConfig(ConstantReader reader, String className) {
-    var url = reader.peek('url')?.stringValue;
+    final String url = reader.peek('url')?.stringValue;
     if (url != null) {
-      var map = genPageConfigFromConstantReader(reader, className);
+      final Map<String, dynamic> map =
+          genPageConfigFromConstantReader(reader, className);
       if (map != null) {
         addEntry("'${url}'", map);
       }
     }
   }
 
-  Map genPageConfigFromConstantReader(ConstantReader reader, String className) {
-    var params = reader.peek('params');
-    var map = {wK('clazz'): className};
+  Map<String, dynamic> genPageConfigFromConstantReader(
+      ConstantReader reader, String className) {
+    final ConstantReader params = reader.peek('params');
+    final Map<String, dynamic> map = <String, dynamic>{wK('clazz'): className};
     if (params != null) {
-      var paramsMap = toStringStringMap(params.mapValue);
+      final Map<String, String> paramsMap = toStringStringMap(params.mapValue);
       map[wK('params')] = "${wK(json.encode(paramsMap))}";
     }
     return map;
   }
 
   void addEntry(String key, Map<String, dynamic> value) {
-    var list = routerMap[key];
+    List<Map<String, dynamic>> list = routerMap[key];
     if (null == list) {
       list = <Map<String, dynamic>>[];
       routerMap[key] = list;

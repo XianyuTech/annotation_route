@@ -11,9 +11,15 @@ import 'package:annotation_route/example/page_d.dart';
 import 'package:annotation_route/example/page_b.dart';
 import 'package:annotation_route/example/page_c.dart';
 
-class $RouterInternal<T extends $RouteOption> {
-  $RouterInternal();
-  final Map<String, List<Map<String, dynamic>>> $innerRouterMap = {
+abstract class ARouterInternal {
+  bool hasPageConfig(ARouteOption option);
+  ARouterResult findPage(ARouteOption option, dynamic initOption);
+}
+
+class ARouterInternalImpl extends ARouterInternal {
+  ARouterInternalImpl();
+  final Map<String, List<Map<String, dynamic>>> innerRouterMap =
+      <String, List<Map<String, dynamic>>>{
     'myapp://pagea': [
       {'clazz': A}
     ],
@@ -30,6 +36,26 @@ class $RouterInternal<T extends $RouteOption> {
       {'clazz': C}
     ]
   };
+
+  @override
+  bool hasPageConfig(ARouteOption option) {
+    final dynamic pageConfig = findPageConfig(option);
+    return pageConfig != null;
+  }
+
+  @override
+  ARouterResult findPage(ARouteOption option, dynamic initOption) {
+    final dynamic pageConfig = findPageConfig(option);
+    if (pageConfig != null) {
+      return implFromPageConfig(pageConfig, initOption);
+    } else {
+      return ARouterResult(state: ARouterResultState.NOT_FOUND);
+    }
+  }
+
+  void instanceCreated(
+      dynamic clazzInstance, Map<String, dynamic> pageConfig) {}
+
   dynamic instanceFromClazz(Type clazz, dynamic option) {
     switch (clazz) {
       case A:
@@ -45,49 +71,58 @@ class $RouterInternal<T extends $RouteOption> {
     }
   }
 
-  dynamic implFromPageConfig(Map<String, dynamic> pageConfig, T option) {
+  ARouterResult implFromPageConfig(
+      Map<String, dynamic> pageConfig, dynamic option) {
+    final String interceptor = pageConfig['interceptor'];
+    if (interceptor != null) {
+      return ARouterResult(
+          state: ARouterResultState.REDIRECT, interceptor: interceptor);
+    }
     final Type clazz = pageConfig['clazz'];
-    if (null == clazz) {
-      return null;
+    if (clazz == null) {
+      return ARouterResult(state: ARouterResultState.NOT_FOUND);
     }
     try {
       final dynamic clazzInstance = instanceFromClazz(clazz, option);
-      return clazzInstance;
+      instanceCreated(clazzInstance, pageConfig);
+      return ARouterResult(
+          widget: clazzInstance, state: ARouterResultState.FOUND);
     } catch (e) {
-      return null;
+      return ARouterResult(state: ARouterResultState.NOT_FOUND);
     }
   }
 
-  dynamic implFromRouteOption(T option) {
-    var pageConfigList = $innerRouterMap[option.urlpattern];
+  dynamic findPageConfig(ARouteOption option) {
+    final List<Map<String, dynamic>> pageConfigList =
+        innerRouterMap[option.urlpattern];
     if (null != pageConfigList) {
       for (int i = 0; i < pageConfigList.length; i++) {
-        var pageConfig = pageConfigList[i];
-        String paramsString = pageConfig['params'];
+        final Map<String, dynamic> pageConfig = pageConfigList[i];
+        final String paramsString = pageConfig['params'];
         if (null != paramsString) {
-          Map<String, dynamic> params = null;
+          Map<String, dynamic> params;
           try {
             params = json.decode(paramsString);
           } catch (e) {
-            print('not found ${pageConfig};');
+            print('not found A{pageConfig};');
           }
           if (null != params) {
             bool match = true;
-            params.forEach((k, dynamic v) {
+            final Function matchParams = (String k, dynamic v) {
               if (params[k] != option?.params[k]) {
                 match = false;
-                print('not match:${params[k]}:${option?.params[k]}');
+                print('not match:A{params[k]}:A{option?.params[k]}');
               }
-            });
+            };
+            params.forEach(matchParams);
             if (match) {
-              print('matched');
-              return implFromPageConfig(pageConfig, option);
+              return pageConfig;
             }
           } else {
-            print('ERROR: in parsing params${pageConfig}');
+            print('ERROR: in parsing paramsA{pageConfig}');
           }
         } else {
-          return implFromPageConfig(pageConfig, option);
+          return pageConfig;
         }
       }
     }

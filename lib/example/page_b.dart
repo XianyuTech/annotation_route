@@ -4,5 +4,5 @@ import 'package:annotation_route/route.dart';
 class B {
   int a;
   String b;
-  B($RouteOption option) : super();
+  B(ARouteOption option) : super();
 }
