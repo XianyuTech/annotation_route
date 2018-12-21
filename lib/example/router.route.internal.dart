@@ -8,13 +8,8 @@ import 'dart:convert';
 import 'package:annotation_route/route.dart';
 import 'package:annotation_route/example/page_a.dart';
 import 'package:annotation_route/example/page_d.dart';
-import 'package:annotation_route/example/page_b.dart';
 import 'package:annotation_route/example/page_c.dart';
-
-abstract class ARouterInternal {
-  bool hasPageConfig(ARouteOption option);
-  ARouterResult findPage(ARouteOption option, dynamic initOption);
-}
+import 'package:annotation_route/example/page_b.dart';
 
 class ARouterInternalImpl extends ARouterInternal {
   ARouterInternalImpl();
@@ -26,14 +21,14 @@ class ARouterInternalImpl extends ARouterInternal {
     'myapp://paged': [
       {'clazz': D, 'params': '{"parama":"d"}'}
     ],
-    'myapp://pageb': [
-      {'clazz': B, 'params': '{"parama":"b"}'}
-    ],
     'myapp://pagec': [
       {'clazz': C}
     ],
     'myapp://pagec_alias': [
       {'clazz': C}
+    ],
+    'myapp://pageb': [
+      {'clazz': B, 'params': '{"parama":"b"}'}
     ]
   };
 
@@ -62,10 +57,10 @@ class ARouterInternalImpl extends ARouterInternal {
         return new A(option);
       case D:
         return new D(option);
-      case B:
-        return new B(option);
       case C:
         return new C(option);
+      case B:
+        return new B(option);
       default:
         return null;
     }
