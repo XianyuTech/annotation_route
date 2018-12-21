@@ -1,6 +1,6 @@
 name: annotation_route
 description: auto generate router config
-version: 0.0.2
+version: 0.0.2+1
 author: voicewitness<voicewitness@gmail.com>
 homepage: https://github.com/alibaba-flutter/annotation_route
 dependencies:
